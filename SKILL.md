@@ -179,18 +179,13 @@ Reference via `reference: $components.parameters.tenantHeader` and optionally ov
 
 ## Validation Workflow
 1. **YAML syntax:** Use PyYAML or another parser before semantic checks.
-2. **Arazzo validation:** Prefer Speakeasy's `openapi arazzo validate`. The skill provides `scripts/validate.sh` to automate detection.
+2. **Arazzo validation:** Prefer Speakeasy's `openapi arazzo validate` when the CLI is available. If it is not installed, follow the manual instructions in `references/validation-guide.md` to set it up or fall back to the official Node validator.
 3. **Schema fallback:** If no CLI is available, mention manual validation instructions from `references/validation-guide.md`.
 
-Run the helper script (auto-detects available tools):
+Recommended command when the CLI exists:
 ```bash
-bash /mnt/skills/user/arazzo-writer/scripts/validate.sh path/to/workflow.arazzo.yaml
+openapi arazzo validate path/to/workflow.arazzo.yaml
 ```
-The script:
-- Ensures the file exists
-- Attempts YAML parsing with PyYAML (if installed)
-- Runs `openapi arazzo validate` when available
-- Emits guidance for installing validation tools otherwise
 
 ## API Testing Patterns to Reuse
 | Pattern | Description |

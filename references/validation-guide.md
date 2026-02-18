@@ -53,23 +53,7 @@ Options:
 
 Backed by `@hyperjump/json-schema` using the official 2024-08-01 schema.
 
-## 4. Provided Helper Script
-`/mnt/skills/user/arazzo-writer/scripts/validate.sh` orchestrates:
-1. File existence check
-2. Optional PyYAML syntax validation
-3. `openapi arazzo validate` when CLI is available
-4. Installation guidance otherwise
-
-Run it after edits:
-```bash
-bash /mnt/skills/user/arazzo-writer/scripts/validate.sh workflow.arazzo.yaml
-```
-Exit codes:
-- `0`: All checks passed
-- `1`: Usage/file/YAML error
-- `2`: `openapi` CLI missing
-
-## 5. Manual Checklist (No Tooling Available)
+## 4. Manual Checklist (No Tooling Available)
 - `arazzo` string matches `1.0.x`
 - `info.title` + `info.version` present
 - `sourceDescriptions` has ≥1 entry with unique `name`
