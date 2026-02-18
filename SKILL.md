@@ -76,6 +76,7 @@ Each `step` executes an OpenAPI operation or another workflow.
 | --- | --- |
 | `stepId` | Unique per workflow |
 | `operationId`/`operationPath`/`workflowId` | Exactly one must be present |
+| `operationPath` | Must concatenate the source `url` with a JSON Pointer (e.g. `"{$sourceDescriptions.petApi.url}#/paths/~1foo/get"`) |
 | `parameters` | Required `in` when calling operations, omitted for workflow calls |
 | `requestBody` | `contentType`, `payload`, optional `replacements` |
 | `successCriteria` | Assertions (status, body, headers, custom logic) |
