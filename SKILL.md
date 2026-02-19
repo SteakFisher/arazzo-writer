@@ -179,13 +179,8 @@ Reference via `reference: $components.parameters.tenantHeader` and optionally ov
 
 ## Validation Workflow
 1. **YAML syntax:** Use PyYAML or another parser before semantic checks.
-2. **Arazzo validation:** Prefer Speakeasy's `openapi arazzo validate` when the CLI is available. If it is not installed, follow the manual instructions in `references/validation-guide.md` to set it up or fall back to the official Node validator.
-3. **Schema fallback:** If no CLI is available, mention manual validation instructions from `references/validation-guide.md`.
-
-Recommended command when the CLI exists:
-```bash
-openapi arazzo validate path/to/workflow.arazzo.yaml
-```
+2. **CLI detection (agentic loop):** Run `command -v openapi` (or `which openapi` on Windows `where openapi`). If the binary exists, execute `openapi arazzo validate path/to/workflow.arazzo.yaml` yourself and include the output in your response. This validation step is part of the agentic workflow, not a user todo.
+3. **Schema fallback:** If the CLI is unavailable, explicitly state that you attempted to detect it, then follow the manual instructions in `references/validation-guide.md` (install the CLI or run the official Node validator) and proceed with whichever option is possible in the current environment.
 
 ## API Testing Patterns to Reuse
 | Pattern | Description |
