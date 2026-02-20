@@ -36,7 +36,11 @@ openapi arazzo validate path/to/workflow.arazzo.yaml
 | `missing required property: info` | Root object missing fields |
 | `step must define exactly one of operationId, operationPath, workflowId` | Step misconfiguration |
 | `parameter missing 'in'` | Parameters for OpenAPI operations need `path/query/header/cookie` |
-| `reference could not be resolved` | `operationId` or `workflowId` doesn’t exist |
+| `reference could not be resolved` | `operationId` or `workflowId` doesn't exist |
+| `step.operationPath must contain a json pointer` | Use format `{$sourceDescriptions.<name>.url}#/paths/~1<path>/<method>` |
+| `step.operationPath must reference the url of a sourceDescription` | Must include `.url` - not other properties |
+| `invalid jsonpath expression: unexpected token when parsing segment` | Filter expressions must use RFC 9535 format: `$[?(@.<field> <op> <value>)]` not `@.user != null` |
+| `step.outputs expression is invalid: must begin with $` | Outputs must be runtime expressions like `$response.body#/field`, not literal values like `true` |
 
 ## 3. Official Spec Validator (Node.js)
 Located in `context/Arazzo-Specification/scripts/validate.mjs`.
@@ -77,5 +81,7 @@ Backed by `@hyperjump/json-schema` using the official 2024-08-01 schema.
 | CLI fails due to missing HTTPS access | Download CLI manually and add to PATH, or use offline validator script |
 | Validation succeeds but runtime fails | Strengthen `successCriteria` to check response shape/content |
 | Large workflows unwieldy | Use `components` and multiple files to keep sections manageable |
+| JSONPath filter expressions failing | Use RFC 9535 format: `$[?(@.field == value)]` NOT `@.field == value` |
+| operationPath validation failing | Must be `{$sourceDescriptions.<name>.url}#/paths/~1path/method` |
 
 Always re-run validation after any structural change (new steps, parameters, success criteria). Early enforcement prevents cascading fixes later.

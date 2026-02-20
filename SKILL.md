@@ -92,6 +92,8 @@ Example API-testing step:
     - context: $response.body
       type: jsonpath
       condition: $[?(@.inStock >= $inputs.minimumRequired)]
+      # For null checks use: $[?(@.user != null)]
+      # For comparisons with step outputs: $[?(@.article.slug == $steps.createArticle.outputs.slug)]
   outputs:
     remaining: $response.body#/inStock
 ```
@@ -193,6 +195,20 @@ Reference via `reference: $components.parameters.tenantHeader` and optionally ov
 
 ## Critical Rules & Gotchas
 - `operationId`, `operationPath`, `workflowId`: exactly one per step.
+- **operationPath format:** Must use the exact format `{$sourceDescriptions.<name>.url}#/paths/~1<path>/<method>` where:
+  - `<name>` is the sourceDescription name
+  - `<path>` is the API path with `/` escaped as `~1`
+  - `<method>` is get, post, put, delete, etc.
+  - Example: `{$sourceDescriptions.petApi.url}#/paths/~1pets/get`
+- **JSONPath filter expressions:** The validator uses RFC 9535 syntax. Filter expressions must use the full filter syntax:
+  - ❌ `$[?@.user != null]` - invalid
+  - ❌ `@.user != null` - invalid  
+  - ✅ `$[?(@.user != null)]` - valid
+  - ✅ `$[?(@.article.slug == $steps.createArticle.outputs.slug)]` - valid for comparisons
+- **outputs expressions:** Must start with `$`. Do not use literal values:
+  - ❌ `true` - invalid
+  - ❌ `$statusCode == 204` - invalid (this is a condition, not an output)
+  - ✅ `$response.body#/id` - valid
 - Parameter objects calling OpenAPI ops must include `in` (`path`, `query`, `header`, `cookie`).
 - Output keys must match `^[a-zA-Z0-9._-]+$`.
 - `successCriteria` arrays default to logical AND; there is no implicit OR.
@@ -203,6 +219,9 @@ Reference via `reference: $components.parameters.tenantHeader` and optionally ov
 
 ## Troubleshooting Checklist
 - **Validation fails immediately:** Confirm `arazzo` version string is `1.0.x` and matches schema.
+- **operationPath errors ("must contain a json pointer" or "must reference the url"):** Ensure format is exactly `{$sourceDescriptions.<name>.url}#/paths/~1<path>/<method>`. The `url` part is required - do not use other properties.
+- **jsonpath expression errors ("unexpected token when parsing segment"):** Filter expressions must use RFC 9535 format `$[?(@.<field> <operator> <value>)]`. Do NOT use bare filter expressions like `@.user != null`.
+- **outputs expression errors ("must begin with $"):** Outputs must be runtime expressions starting with `$`. Use JSON Pointer syntax like `$response.body#/fieldName` to extract values.
 - **Operation resolution errors:** Ensure each `operationId` exists within the referenced OpenAPI source.
 - **Missing data:** Check that the previous step's `outputs` actually expose the field you reference.
 - **Circular `goto`:** Validate that branching paths eventually terminate or return to safe steps.

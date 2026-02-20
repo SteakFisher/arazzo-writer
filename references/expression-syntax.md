@@ -69,11 +69,36 @@ Example:
 ```yaml
 - context: $response.body
   type: jsonpath
-  condition: $[?(@.items[?(@.status == 'READY')])]
+  condition: $[?(@.inStock >= 5)]
 ```
 - Supports RFC 9535 (draft-goessner) JSONPath.
 - Use `@` for current node, `$` for root (the `context`).
 - JSONPath returns truthy/falsy; any match satisfies the criterion.
+
+### JSONPath Filter Examples
+```yaml
+# Check if field exists and is not null
+- context: $response.body
+  type: jsonpath
+  condition: $[?(@.user != null)]
+
+# Compare with step output
+- context: $response.body
+  type: jsonpath
+  condition: $[?(@.article.slug == $steps.createArticle.outputs.slug)]
+
+# Check array length
+- context: $response.body
+  type: jsonpath
+  condition: $[?(@.comments.length > 0)]
+
+# Boolean comparison
+- context: $response.body
+  type: jsonpath
+  condition: $[?(@.article.favorited == true)]
+```
+
+> Note: Always wrap filter expressions in `$[?(...)]` - do NOT use bare expressions like `@.user != null`
 
 ## XPath Conditions
 ```yaml
